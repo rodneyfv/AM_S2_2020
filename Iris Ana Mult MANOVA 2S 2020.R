@@ -347,7 +347,7 @@ gen.graf.resid(mY,mresult,var,typeresid,wplot)
 # Resíduo baseado na distância Mahalanobis
 
 gen.graf.resid.quad.form(mY,mresult)
-  
+
 
 
 # Daqui para a frente está "desativado"
@@ -449,7 +449,7 @@ par(mfrow =c(1,1))
 #
 qqPlot((m.residuo[,4]),dist="norm",mean=0,sd=1,col.lines=1,grid="FALSE",xlab="quantil da N(0,1)",ylab=paste("quantil da distribuição do resíduo studentizado"),cex=1.2)
 #
- 
+
 ##############################################
 # Obtendo estimativa dos parâmetros do modelo
 fit.model<-lm(as.matrix(irisd) ~ especie)
