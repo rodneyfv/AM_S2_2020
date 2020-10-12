@@ -1,4 +1,13 @@
 
+# exemplo com os dados do exemplo 6.1 do livro do Daniel Furtado
+# Ferreira (1996, Análise Multivariada, p. 226). São analisadas
+# quatro variedades de feijão quanto à produtividade em Kg/ha e
+# número de grãos por vagem.
+# as variáveis são as seguintes
+# P: produtividade em Kg/ha
+# NVG: número de grãos por vagem
+# grupo: variedade de feijão analisada
+
 # bibliotecas necessárias
 library(car)
 library(tidyverse)
