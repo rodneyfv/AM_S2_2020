@@ -74,13 +74,15 @@ plot(dadosdf$Amt,dadosdf$Ami,pch=19,cex.axis=1.2,cex.lab=1.2,cex=1.2,xlab="amt",
 lines(dadosdf$Amt,m.fitted[,2],col=1,type="l",lwd=2,pch=19,cex.axis=1.2)
 # Variável Ami
 # média
-epmupred <- sqrt(mcovbeta[3,3] + mcovbeta[4,4]*(sort(dadosdf$Amt^2)) + mcovbeta[3,4])
+epmupred <- sqrt(mcovbeta[1,1] + mcovbeta[2,2]*(sort(dadosdf$Ami^2)) + mcovbeta[1,2])
+#epmupred <- sqrt(mcovbeta[3,3] + mcovbeta[4,4]*(sort(dadosdf$Amt^2)) + mcovbeta[3,4])
 liicmupred <- sort(m.fitted[,2]) - 1.96*epmupred
 liscmupred <- sort(m.fitted[,2]) + 1.96*epmupred
 lines(sort(dadosdf$Amt),liicmupred,col=2,type="l",lwd=2,lty=2,pch=19,cex.axis=1.2)
 lines(sort(dadosdf$Amt),liscmupred,col=2,type="l",lwd=2,lty=2,pch=19,cex.axis=1.2)
 # uma única observação
-epY <- sqrt(mcovbeta[3,3] + mcovbeta[4,4]*(sort(dadosdf$Amt^2)) + mcovbeta[3,4]+diag(mSigma)[2])
+epY <- sqrt(mcovbeta[1,1] + mcovbeta[2,2]*(sort(dadosdf$Ami^2)) + mcovbeta[1,2]+diag(mSigma)[2])
+#epY <- sqrt(mcovbeta[3,3] + mcovbeta[4,4]*(sort(dadosdf$Amt^2)) + mcovbeta[3,4]+diag(mSigma)[2])
 liicY <- sort(m.fitted[,2]) - 1.96*epY
 liscY <- sort(m.fitted[,2]) + 1.96*epY
 lines(sort(dadosdf$Amt),liicY,col=3,type="l",lwd=2,lty=2,pch=19,cex.axis=1.2)

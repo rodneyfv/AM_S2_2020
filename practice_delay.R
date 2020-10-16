@@ -40,62 +40,90 @@ for(i in 1:2){
   for(j in c("L","R","S","W")){
     cat("variável: ",j,"\n")
     dados %>% filter(group == i) %>% mutate_(col=j) %>%
-      summarise(min = min(col), max=max(col), media=mean(col), sd=sd(col)) %>%
+      summarise(media=round(mean(col),2), sd=round(sd(col),2), 
+                var=round(var(col),4), min = min(col), 
+                mediana = median(col), max=max(col), n=n()) %>%
       print.table()
   }
   cat("---------\n")
 }
 
 # Boxplots
-boxplot(dados$L~dados$group)
-boxplot(dados$R~dados$group)
-boxplot(dados$S~dados$group)
-boxplot(dados$W~dados$group)
+par(mfrow=c(2,2),mar=c(4,4,2,2))
+boxplot(dados$L~dados$group,ylab = "nota", xlab = "grupo", main = "variável: L")
+boxplot(dados$R~dados$group,ylab = "nota", xlab = "grupo", main = "variável: R")
+boxplot(dados$S~dados$group,ylab = "nota", xlab = "grupo", main = "variável: S")
+boxplot(dados$W~dados$group,ylab = "nota", xlab = "grupo", main = "variável: W")
 
 # Histogramas
 
-par(mfrow=c(4,2),mar=c(2,2,2,2))
+par(mfrow=c(2,2),mar=c(4,4,2,2))
 for(j in c("L","R","S","W")){
-    for(i in 1:2){
-      dados %>% filter(group == i) %>% mutate_(col=j) %>%
-      with(hist(col,main=paste("variavel:",j," e  grupo:",i)))
-  }
+  dados %>% filter(group == 1) %>% mutate_(col=j) %>%
+      with(hist(col,main=paste("variável",j," e  grupo 1"),
+                xlab = "nota", ylab = "frequência"))
 }
+
+par(mfrow=c(2,2),mar=c(4,4,2,2))
+for(j in c("L","R","S","W")){
+  dados %>% filter(group == 2) %>% mutate_(col=j) %>%
+    with(hist(col,main=paste("variável",j," e  grupo 2"),
+              xlab = "nota", ylab = "frequência"))
+}
+
+# gráficos de dispersão
+
+dados %>% filter(group == 1) %>% select(L,R,S,W) %>% plot(main="grupo 1")
+dados %>% filter(group == 2) %>% select(L,R,S,W) %>% plot(main="grupo 2")
 
 # gráficos de quantis-quantis com envelopes
 
-par(mfrow=c(4,2),mar=c(2,2,2,2))
+par(mfrow=c(2,2),mar=c(4,4,2,2))
 for(j in c("L","R","S","W")){
-  for(i in 1:2){
-    dados %>% filter(group == i) %>% mutate_(col=j) %>%
-      with(qqPlot(scale(col),dist="norm",mean=0,
-                  sd=1,col.lines=1,grid="FALSE",
-                  xlab="quantil da N(0,1)",ylab="",
-                  main=paste("variavel:",j," e  grupo:",i)))
-  }
+  dados %>% filter(group == 1) %>% mutate_(col=j) %>%
+    with(qqPlot(scale(col),dist="norm",mean=0,
+                sd=1,col.lines=1,grid="FALSE",
+                xlab="quantil da N(0,1)",ylab="quantil da distribuição da variável",
+                main=paste("variável",j," e  grupo 1")))
+}
+
+par(mfrow=c(2,2),mar=c(4,4,2,2))
+for(j in c("L","R","S","W")){
+  dados %>% filter(group == 2) %>% mutate_(col=j) %>%
+    with(qqPlot(scale(col),dist="norm",mean=0,
+                sd=1,col.lines=1,grid="FALSE",
+                xlab="quantil da N(0,1)",ylab="quantil da distribuição da variável",
+                main=paste("variável",j," e  grupo 2")))
 }
 
 # avaliando a distância de Mahalanobis
 
+par(mfrow=c(2,1),mar=c(4,4,2,2))
 s2g1 <- dados %>% filter(group == 1) %>% mutate_(col=j) %>%
   select(c(L,R,S,W)) %>% cov()
+round(s2g1,2)
+dados %>% filter(group == 1) %>% mutate_(col=j) %>%
+  select(c(L,R,S,W)) %>% cor() %>% round(2)
 mug1 <- dados %>% filter(group == 1) %>% mutate_(col=j) %>%
   select(c(L,R,S,W)) %>% colMeans()
 vQg1 <- dados %>% filter(group == 1) %>% select(c(L,R,S,W)) %>% 
   mahalanobis(center=mug1,cov=s2g1)
 qqPlot(n1*vQg1,dist="chisq",df=p,col.lines=1,grid="FALSE",
        xlab="quantil da distribuição qui-quadrado",
-       ylab="quantil da forma quadrática",main="grupo 1")
+       ylab="quantil da dist. da forma quadrática",main="grupo 1")
 
 s2g2 <- dados %>% filter(group == 2) %>% mutate_(col=j) %>%
   select(c(L,R,S,W)) %>% cov()
+round(s2g2,2)
+dados %>% filter(group == 2) %>% mutate_(col=j) %>%
+  select(c(L,R,S,W)) %>% cor() %>% round(2)
 mug2 <- dados %>% filter(group == 2) %>% mutate_(col=j) %>%
   select(c(L,R,S,W)) %>% colMeans()
 vQg2 <- dados %>% filter(group == 2) %>% select(c(L,R,S,W)) %>% 
   mahalanobis(center=mug2,cov=s2g2)
 qqPlot(n2*vQg2,dist="chisq",df=p,col.lines=1,grid="FALSE",
        xlab="quantil da distribuição qui-quadrado",
-       ylab="quantil da forma quadrática",main="grupo 1")
+       ylab="quantil da dist. da forma quadrática",main="grupo 2")
 
 
 # Teste de hipóteses
@@ -128,9 +156,7 @@ summary.manova(m.ajuste,test="Pillai")
 summary.manova(m.ajuste,test="Hotelling-Lawley")
 summary.manova(m.ajuste,test="Roy")
 
-# a hipotése nula é rejeita na MANOVA, mas devemos lembrar
-# que ela utiliza a suposição de que as matrizes de covariâncias
-# são iguais
+# não rejeitamos a hipotése nula na MANOVA
 
 # levando em consideração que as matrizes de covariâncias não
 # devem ser iguais
@@ -156,4 +182,6 @@ nu <- (p + p^2)/(
 (nu*p/(nu - p + 1))*qf(.05,p,nu-p+1,lower.tail = FALSE)
 # não rejeitamos H0 ao nível de 5% de significância
 T2 > (nu*p/(nu - p + 1))*qf(.05,p,nu-p+1,lower.tail = FALSE)
+# nível descritivo
+pf(T2/(nu*p/(nu - p + 1)),p,nu-p+1,lower.tail = FALSE)
 
