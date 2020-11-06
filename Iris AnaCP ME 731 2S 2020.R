@@ -17,10 +17,10 @@ irisaux <- iris
 colnames(irisaux)<-c("CS","LS","CP","LP","Especie")
 
 # programas de diagnóstico para modelos de regressão normal lineares
-source("./AM_S2_2020/diag_norm.r", encoding = "windows-1252")
-source("./AM_S2_2020/envel_norm.r", encoding = "windows-1252")
+source("./diag_norm.r", encoding = "windows-1252")
+source("./envel_norm.r", encoding = "windows-1252")
 # Teste CB = M
-source("./AM_S2_2020/Testes Cbeta.r", encoding = "windows-1252")
+source("./Testes Cbeta.r", encoding = "windows-1252")
 
 #rownames(irisd) <- as.vector(iris[,5])
 
